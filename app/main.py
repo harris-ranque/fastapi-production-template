@@ -71,8 +71,7 @@ if settings.cors_origins:
     )
 
 # Add trusted host middleware
-if settings.trusted_hosts:
-    app.add_middleware(
+app.add_middleware(
         TrustedHostMiddleware, allowed_hosts=["*"] if settings.debug else ["localhost", "127.0.0.1"])
 
 # Request logging middleware
@@ -89,7 +88,7 @@ setup_metrics(app)
 logger.info("Prometheus metrics enabled")
 
 # Include routers
-app.include_router(health.router, prefix="/health", tags=["health"])
+# app.include_router(health.router, prefix="/health", tags=["health"])
 app.include_router(example.router, prefix="/api", tags=["example"])
 
 @app.get("/")
