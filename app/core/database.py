@@ -1,8 +1,9 @@
 import logging
+from re import L
 
 from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine, async_sessionmaker
-from sqlalchemy.orm import DeclarativeBase
+from app.models.item import Base
 
 from app.config import settings
 
@@ -11,10 +12,6 @@ logger = logging.getLogger(__name__)
 # Global variables for database
 engine: object | None = None
 async_session: async_sessionmaker[AsyncSession] | None = None
-
-class Base(DeclarativeBase):
-    """Base class for SQLAlchemy ORM models."""
-    pass
 
 
 async def init_database():
@@ -55,7 +52,6 @@ async def check_database_health() -> bool:
     """Check the database health."""
     if not engine:
         return False
-
     try:
         async with engine.connect() as conn:
             await conn.execute(text("SELECT 1"))
@@ -63,5 +59,14 @@ async def check_database_health() -> bool:
     except Exception:
         logger.error("DB health check failed.", exc_info=True)
         return False
+
+async def init_db():
+    """Initialize the database tables."""
+    if not engine:
+        raise RuntimeError("Database not initialized")
+    async with engine.begin() as conn:
+        await conn.run_sync(Base.metadata.create_all)
+        logger.info("Database tables created successfully")
+
 
 

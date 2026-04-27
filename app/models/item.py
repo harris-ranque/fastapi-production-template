@@ -7,6 +7,7 @@ from datetime import datetime
 
 class Base(DeclarativeBase):
     """Base class for SQLAlchemy ORM models."""
+    pass
 
 
 class Item(Base):
