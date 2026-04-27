@@ -20,19 +20,13 @@ async def list_items(db: AsyncSession = Depends(get_database)):
     return result.scalars().all()    
 
 
-# @router.post("/items", response_model=ItemResponse, status_code=201)
-# async def create_item(item: ItemCreate, db: AsyncSession = Depends(get_database)):
-#     """Create a new item."""
-#     global next_id
+@router.post("/items", response_model=ItemResponse, status_code=201)
+async def create_item(item: ItemCreate, db: AsyncSession = Depends(get_database)):
+    """Create a new item."""
     
-#     new_item = ItemResponse(
-#         id=next_id,
-#         name=item.name,
-#         description=item.description,
-#         price=item.price,
-#     )
-#     items_db.append(new_item)
-#     next_id += 1
+    new_item = db.add(Item(name=item.name, description=item.description, price=item.price))
+    await db.commit()
+    await db.refresh(new_item)
 
-#     logger.info(f"Created item: {new_item}")
-#     return new_item
+    logger.info(f"Created item: {new_item}")
+    return new_item
