@@ -88,7 +88,7 @@ setup_metrics(app)
 logger.info("Prometheus metrics enabled")
 
 # Include routers
-# app.include_router(health.router, prefix="/health", tags=["health"])
+app.include_router(health.router, prefix="/health", tags=["health"])
 app.include_router(items.router, prefix="/api", tags=["items"])
 
 @app.get("/")
